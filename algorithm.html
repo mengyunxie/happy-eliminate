@@ -7,31 +7,47 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+    /*全局公用样式*/
+    body{margin:0;padding:0;color:#000;font-size:12px; font-family:"微软雅黑"; background:#FFF; line-height:21px;}
+    form,input,div,dl,dt,dd,ul,ol,li,table,tr,th,td,textarea,form,botton,img,h1,h2,h3,h4,h5,h6,p{border:0;margin:0;padding:0;}
+    img{border:0;vertical-align:top;width: auto; height: auto; max-width: 100%;}
+    input[type="text"]{-webkit-appearance: none;}
+    /*列表公用样式*/
+    ul,li{list-style:none;}
+    /*浮动公用样式*/
+    .left{float:left}
+    .right{float:right}
+    .clear{clear:both}
+    strike{ color:#8c8c8c;}
+    i,h1,h2{ font-style:normal;}
+    .tableBox{width:300px;height:300px;border:1px solid #eee;margin:20px auto;}
+    .row{width:100%;height:60px;overflow:hidden;}
+    .cell{float:left;width:58px;height:58px;line-height:58px;margin:1px 1px;text-align:center;border-radius:3px;}
+    .cell.type0{background-color:#e8c646;}
+    .cell.type1{background-color:#52bf52;}
+    .cell.type2{background-color:#6e6ce8;}
+    .cell.type3{background-color:#e47be4;}
+    .cell.type4{background-color:#42d6d6;}
 
+    </style>
     </head>
     <body>
+<!--       <div class="tableBox">
+        <div class="row">
+          <div class="cell a"></div>
+          <div class="cell b"></div>
+          <div class="cell c"></div>
+          <div class="cell a"></div>
+          <div class="cell c"></div>
+        </div>
+      </div> -->
     </body>
 <script type="text/javascript">
-// var initArr = [] ,clearRule;
+
 var ROW_MAX = 5;
 var COL_MAX = 5;
-
-//种类5中，Math.floor(Math.random() * 5+1); 
-// max - 期望的最大值
-// min - 期望的最小值 
-// parseInt(Math.random()*(max-min+1)+min,10);
-// Math.floor(Math.random()*(max-min+1)+min);
-// for(i = 0;i<m;i++){
-// 	initArr[i] = [];
-// 	for(j = 0;j<n;j++){
-// 		initArr[i][j] = Math.floor(Math.random() * 5+1);
-
-// 	}
-// }
-// console.log(initArr);
-
-
-
+var SPECI_MAX = 5;
 //eg:
 //3,2,2,3,2         , , ,3,2        5,5,2,3,2        5, ,2,3,2        5,3,2,3,2
 //1,2,5,2,5        3,2,2,2,5        3,2,2,2,5        3, ,2,2,5        3,3,2,2,5
@@ -57,75 +73,92 @@ var COL_MAX = 5;
 //0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0
 //0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0
 
-//消除思路
-//N种图形，生成N份副表，横向比较，有3个相同，加一；竖列比较，有3个相同，加一；
-//副表判断有2，特效图形
-//       无2，横向相加，等3，3消，返回；等4，4消，返回；等5，5消，返回；
-//           竖列相加，等3，3消，返回；等4，4消，返回；等5，5消，返回；
-//
-//从右下角开始，每个元素与其上、左元素对比：不同，前进一个元素
-//                                          相同，此方向继续加一对比：不同，前进一个元素
-//                                                                    相同，消除，左上方元素填充，元素重排，触发局部对比机制：
-//
-var initArr1 = [[3,2,2,2,2],
-                [1,2,5,4,5],
-                [3,3,3,1,5],
+var initArr1 = [[3,4,2,2,2],
+                [1,4,0,4,2],
+                [3,3,3,1,0],
                 [3,2,4,2,1],
-                [3,4,5,1,3]];
-var speci1 = [[0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0]];
-var speci2 = [[0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0]];
-var speci3 = [[0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0]];
-var speci4 = [[0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0]];
-var speci5 = [[0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0],
-              [0,0,0,0,0]];
-
+                [3,4,0,1,3]];
+var speciArr = [];
+for (var i = 0; i < SPECI_MAX; i++) {
+  speciArr[i] = [[0,0,0,0,0],
+                 [0,0,0,0,0],
+                 [0,0,0,0,0],
+                 [0,0,0,0,0],
+                 [0,0,0,0,0]];
+}
+function allowDrop(ev){  
+  ev.preventDefault();  
+}  
+  
+var srcdiv = null;  
+function drag(ev,divdom){  
+  srcdiv=divdom; 
+  console.log(divdom); 
+  ev.dataTransfer.setData("text/html",divdom.innerHTML);  
+}  
+  
+function drop(ev,divdom){  
+  ev.preventDefault();  
+  if(srcdiv != divdom){  
+    srcdiv.innerHTML = divdom.innerHTML; 
+    console.log(divdom);  
+    console.log(ev);
+    //ev.target.className
+    divdom.innerHTML=ev.dataTransfer.getData("text/html");  
+  }  
+} 
+function initDemo(arrParams){
+  // var tableDemo = '';
+  // tableDemo +='<div class="tableBox">';
+  var tableDemo = document.createElement('div'); 
+      tableDemo.className = 'tableBox';
+  var rowDemo = ''
+  for(var row =0;row<ROW_MAX;row++){
+      rowDemo +='<div class="row">';
+      var cellDemo = '';
+    for(var col =0;col<COL_MAX;col++){
+      cellDemo +='<div class="cell type'+arrParams[row][col]+'" ondrop="drop(event,this)" ondragover="allowDrop(event)" draggable="true" ondragstart="drag(event, this)">'+arrParams[row][col]+'</div>';
+    }    
+      rowDemo =rowDemo+cellDemo+'</div>'
+  }
+  //tableDemo =tableDemo+rowDemo+'</div>'
+  //console.log(tableDemo);
+  //document.body.innerHTML =tableDemo;
+  tableDemo.innerHTML = rowDemo;
+  document.body.appendChild(tableDemo);
+}
 function setSpeci(speci, row, col) {
-    var theSpeci;
-    switch (speci) {
-        case 1:
-            theSpeci = speci1;
-            break;
-        case 2:
-            theSpeci = speci2;
-            break;
-        case 3:
-            theSpeci = speci3;
-            break;
-        case 4:
-            theSpeci = speci4;
-            break;
-        case 5:
-            theSpeci = speci5;
-            break;
-    }
-    theSpeci[row][col] += 1;
+    // var theSpeci;
+    // switch (speci) {
+    //     case 1:
+    //         theSpeci = speci1;
+    //         break;
+    //     case 2:
+    //         theSpeci = speci2;
+    //         break;
+    //     case 3:
+    //         theSpeci = speci3;
+    //         break;
+    //     case 4:
+    //         theSpeci = speci4;
+    //         break;
+    //     case 5:
+    //         theSpeci = speci5;
+    //         break;
+    // }
+    // theSpeci[row][col] += 1;
+    speciArr[speci][row][col]++;
 }
 
-function diffAll(arrParams){
+function handleArr(arrParams){
+
+    var res = 0;
 
     for (var row = 0; row < ROW_MAX; row++) {
         for (var col = 0; col < COL_MAX - 2; col++) {
             if (arrParams[row][col] == arrParams[row][col + 1]) {
                 if (arrParams[row][col] == arrParams[row][col + 2]) {
+                    res = 1;
                     setSpeci(arrParams[row][col], row, col);
                     setSpeci(arrParams[row][col], row, col + 1);
                     setSpeci(arrParams[row][col], row, col + 2);
@@ -152,6 +185,7 @@ function diffAll(arrParams){
         for (var row = 0; row < ROW_MAX - 2; row++) {
             if (arrParams[row][col] == arrParams[row + 1][col]) {
                 if (arrParams[row][col] == arrParams[row + 2][col]) {
+                    res = 1;
                     setSpeci(arrParams[row][col], row, col);
                     setSpeci(arrParams[row][col], row + 1, col);
                     setSpeci(arrParams[row][col], row + 2, col);
@@ -174,6 +208,8 @@ function diffAll(arrParams){
             }
         }
     }
+
+    return res;
 }
 function printArr(arr) {
   console.log("-------------");
@@ -182,112 +218,134 @@ function printArr(arr) {
   }
   console.log("-------------");
 }
-diffAll(initArr1);
-printArr(initArr1);
-printArr(speci1);
-printArr(speci2);
-printArr(speci3);
-printArr(speci4);
-printArr(speci5);
-var totle = 0;
-function diffSpeci(speciArr){
 
+var scoreTotle = 0;
+function calcScore(speciArr){
+    var score = 0;
     for (var row = 0; row < ROW_MAX; row++) {
         for (var col = 0; col < COL_MAX; col++) {
           if(speciArr[row][col]>0){
-            totle += speciArr[row][col];
-            speciArr[row][col] = 0;
-            initArr1[row][col] = Math.floor(Math.random() * 5+1);
+            score += speciArr[row][col];
+            // speciArr[row][col] = 0;
+            
           }        
         }
     }
+    switch(score){
+      case 3:
+        score = score*1;
+        break;
+      case 4:
+        score = score*1;
+        break;
+      case 5:
+        score = score*2;
+        break;
+      case 6:
+        score = score*3;
+        break;
+      case 7:
+        score = score*3+1;
+        break;
+      case 8:
+        score = score*3+2;
+        break;
+
+    }
+    scoreTotle +=score;
 }
-diffSpeci(speci1);
-diffSpeci(speci2);
-diffSpeci(speci3);
-diffSpeci(speci4);
-diffSpeci(speci5);
-console.log(totle);
-printArr(initArr1);
+function refreshArr(arr, rspeci){
+    // 遍历每一列
+    for (var col = 0; col < COL_MAX; col++){
+      var cntNoneZero = 0;
+      var firstNoneZeroRow;
+      for (var row = ROW_MAX - 1; row >= 0; row--) {
+        if (cntNoneZero == 0) {
+          // 从下往上找第一个非0
+          if (rspeci[row][col] > 0) {
+            cntNoneZero++;
+            firstNoneZeroRow = row;
+          }
+        } else {
+          // 找到第一个非0后，计非0的个数
+          if (rspeci[row][col] > 0) {
+            cntNoneZero++;
+          } else {
+            break;
+          }
+        }
+      }
+      if (cntNoneZero > 0) {
+        for (var i = firstNoneZeroRow; i >= 0 ; i--) {
+          if (i - cntNoneZero >= 0) {
+            initArr1[i][col] = initArr1[i - cntNoneZero][col];
+          } else {
+            //Math.floor(Math.random()*(max-min+1)+min);
+            initArr1[i][col] = Math.floor(Math.random() * SPECI_MAX);
+          }
+        }
+      }
+    }
+}
 
-//矩阵对比思路，算法？？？
-//思路一：元素对比判断
-//第一圈：
-//每个元素判断四个方位（右>下>左>上）是否有元素，无返回；
-//有，判断是否相同
-//
+function clearArr(arr) {
+  for (var row = 0; row < ROW_MAX; row++) {
+    for (var col = 0; col < COL_MAX; col++) {
+      arr[row][col] = 0;
+    }
+  }
+}
 
-//
-//思路二：图形对比判断
-//按图形优先级判断，有存在消除，填补空缺，在重新。。。
-//               无，下一个优先级图形判断。。。
-//
+function switchArr(initArr1, row1, col1, row2, col2) {
+  var a = initArr1[row1][col1];
+  initArr1[row1][col1] = initArr1[row2][col2];
+  initArr1[row2][col2] = a;
+}
 
-//L形判断：
-//右侧判断
-//右一不同，右下L and 右上L : false，判断左侧。
-//   相同，右二不同，右下L and 右上L : false，判断左侧。
-//           相同，判断下 ，下一相同，下二相同，右下L : true;消除，填补空缺。重新全盘L形判断。
-//                                    不同，右下L : false，判断上一，不同，右上L : false，判断左侧。
-//                                                                相同，上二不同，右上L : false，判断左侧。
-//                                                                         相同，右上L : true;消除，填补空缺。重新全盘L形判断;
-//                           不同，右下L : false，判断上一，不同，右上L : false，判断左侧。
-//                                                      相同，上二不同，右上L : false，判断左侧。
-//                                                               相同，右上L : true;消除，填补空缺。重新全盘L形判断;
-//
+function mainProcess() {
 
-//左侧判断
-//左一不同，左下L and 左上L : false，判断下一元素。
-//   相同，左二不同，左下L and 左上L : false，判断下一元素。
-//           相同，判断下 ，下一相同，下二相同，左下L : true;消除，填补空缺。重新全盘L形判断。
-//                                    不同，左下L : false，判断上一，不同，左上L : false，判断下一元素。
-//                                                                相同，上二不同，左上L : false，判断左侧。
-//                                                                         相同，左上L : true;消除，填补空缺。重新全盘L形判断;
-//                           不同，左下L : false，判断上一，不同，左上L : false，判断下一元素。
-//                                                      相同，上二不同，左上L : false，判断下一元素。
-//                                                               相同，左上L : true;消除，填补空缺。重新全盘L形判断;
-//                            
+  var res = 0;
 
+  // switchArr(initArr1, row1, col1, row2, col2);
+  initDemo(initArr1);
+  res = handleArr(initArr1);
+  // if (res == 0) {
+  //   switchArr(initArr1, row1, col1, row2, col2);
+  //   return;
+  // }
 
-//T形判断：
-//
-//
+  printArr(initArr1);
 
-//横竖5判断：
-//
-//
+  // while (res == 1) {
 
-//横竖4判断：
-//
-//
+    // printArr(speci1);
+    // printArr(speci2);
+    // printArr(speci3);
+    // printArr(speci4);
+    // printArr(speci5);
 
-//横竖3判断：
-//
-//
+    for (var i = 0; i < SPECI_MAX; i++) {
+      calcScore(speciArr[i]);
+    }
+    for (var i = 0; i < SPECI_MAX; i++) {
+      refreshArr(initArr1, speciArr[i]);
+    }
+    for (var i = 0; i < SPECI_MAX; i++) {
+      clearArr(speciArr[i]);
+    }
 
+    res = handleArr(initArr1);
 
+  // }
 
-//消除规则（简易版，无特效消除）
-//横3消，竖3消， 1分，优先级4；
-//横4消，竖4消， 3分，优先级3；
-//横5消，竖5消， 5分，优先级2；
-//T消，5消，7分，优先级1；
-//L消，5消，7分，优先级0；
+  console.log(scoreTotle);
+  printArr(initArr1);
+  initDemo(initArr1);
+}
+
+mainProcess();
 
 
- //定位记录
- //程序主动发起比较判断，定位记录
- //交换事件触发，定位记录，优先级高
-
- //交换机制
- //对比周围是否可以交换，触发消除机制
- //
-
- //局部对比机制
- //
- //
- //
- //
 </script>
 </html>
 
