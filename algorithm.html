@@ -86,25 +86,26 @@ for (var i = 0; i < SPECI_MAX; i++) {
                  [0,0,0,0,0],
                  [0,0,0,0,0]];
 }
-function allowDrop(ev){  
+function dragOver(ev){  
   ev.preventDefault();  
+  console.log(ev); 
 }  
   
 var srcdiv = null;  
-function drag(ev,divdom){  
+function dragStart(ev,divdom){  
   srcdiv=divdom; 
-  console.log(divdom); 
-  ev.dataTransfer.setData("text/html",divdom.innerHTML);  
+  console.log(ev); 
+  ev.dataTransfer.setData("text/html",divdom.innerHTML);
+  ev.dataTransfer.setData("className",divdom.className);   
 }  
   
 function drop(ev,divdom){  
   ev.preventDefault();  
   if(srcdiv != divdom){  
     srcdiv.innerHTML = divdom.innerHTML; 
-    console.log(divdom);  
-    console.log(ev);
-    //ev.target.className
-    divdom.innerHTML=ev.dataTransfer.getData("text/html");  
+    srcdiv.className = divdom.className; 
+    divdom.innerHTML=ev.dataTransfer.getData("text/html"); 
+    divdom.className=ev.dataTransfer.getData("className");  
   }  
 } 
 function initDemo(arrParams){
@@ -117,7 +118,7 @@ function initDemo(arrParams){
       rowDemo +='<div class="row">';
       var cellDemo = '';
     for(var col =0;col<COL_MAX;col++){
-      cellDemo +='<div class="cell type'+arrParams[row][col]+'" ondrop="drop(event,this)" ondragover="allowDrop(event)" draggable="true" ondragstart="drag(event, this)">'+arrParams[row][col]+'</div>';
+      cellDemo +='<div class="cell type'+arrParams[row][col]+'" ondrop="drop(event,this)" ondragover="dragOver(event)" draggable="true" ondragstart="dragStart(event, this)">'+arrParams[row][col]+'</div>';
     }    
       rowDemo =rowDemo+cellDemo+'</div>'
   }

@@ -1,41 +1,119 @@
-    <!DOCTYPE HTML>  
-    <html>  
-    <head>  
-    <style type="text/css">  
-    #div1, #div2  
-    {float:left; width:100px; height:35px; margin:10px;padding:10px;border:1px solid #aaaaaa;}  
-    </style>  
-    <script type="text/javascript">  
-    function allowDrop(ev)  
-    {  
-    ev.preventDefault();  
-    }  
-      
-    var srcdiv = null;  
-    function drag(ev,divdom)  
-    {  
-    srcdiv=divdom;  
-    ev.dataTransfer.setData("text/html",divdom.innerHTML);  
-    }  
-      
-    function drop(ev,divdom)  
-    {  
-    ev.preventDefault();  
-    if(srcdiv != divdom){  
-    srcdiv.innerHTML = divdom.innerHTML;  
-    divdom.innerHTML=ev.dataTransfer.getData("text/html");  
-    }  
-    }  
-    </script>  
-    </head>  
-    <body>  
-      
-    <div id="div1" ondrop="drop(event,this)" ondragover="allowDrop(event)" draggable="true" ondragstart="drag(event, this)">  
-      <p>ni hao!</p>  
-    </div>  
-    <div id="div2" ondrop="drop(event,this)" ondragover="allowDrop(event)" draggable="true" ondragstart="drag(event, this)">  
-    <p>Hello world!</p>  
-    </div>  
-      
-    </body>  
-    </html>  
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>key</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+    /*全局公用样式*/
+    body{margin:0;padding:0;color:#000;font-size:12px; font-family:"微软雅黑"; background:#FFF; line-height:21px;}
+    form,input,div,dl,dt,dd,ul,ol,li,table,tr,th,td,textarea,form,botton,img,h1,h2,h3,h4,h5,h6,p{border:0;margin:0;padding:0;}
+    img{border:0;vertical-align:top;width: auto; height: auto; max-width: 100%;}
+    input[type="text"]{-webkit-appearance: none;}
+    /*列表公用样式*/
+    ul,li{list-style:none;}
+    /*浮动公用样式*/
+    .left{float:left}
+    .right{float:right}
+    .clear{clear:both}
+    strike{ color:#8c8c8c;}
+    i,h1,h2{ font-style:normal;}
+
+    .tableBox{
+        position:relative;
+        width:300px;
+        height:300px;
+        border:1px solid #eee;
+        margin:20px auto;
+    }
+    .row{
+        width:100%;
+        height:60px;
+        overflow:hidden;
+    }
+    .cell{
+        float:left;
+        width:58px;
+        height:58px;
+        line-height:58px;
+        margin:1px 1px;
+        text-align:center;
+        border-radius:3px;
+    }
+    .cell.type0{
+        background-color:#e8c646;
+    }
+    .cell.type1{
+        background-color:#52bf52;
+    }
+    .cell.type2{
+        background-color:#6e6ce8;
+    }
+    .cell.type3{
+        background-color:#e47be4;
+    }
+    .cell.type4{
+        background-color:#42d6d6;
+    }
+
+    </style>
+    </head>
+    <body>
+      <div class="tableBox" id="tableBox">
+        <div class="row">
+          <div class="cell type0"></div>
+          <div class="cell type1"></div>
+          <div class="cell type4"></div>
+          <div class="cell type3"></div>
+          <div class="cell type1"></div>
+        </div>
+        <div class="row">
+          <div class="cell type1"></div>
+          <div class="cell type1"></div>
+          <div class="cell type3"></div>
+          <div class="cell type4"></div>
+          <div class="cell type2"></div>
+        </div>
+        <div class="row">
+          <div class="cell type2"></div>
+          <div class="cell type2"></div>
+          <div class="cell type4"></div>
+          <div class="cell type2"></div>
+          <div class="cell type2"></div>
+        </div>
+        <div class="row">
+          <div class="cell type0"></div>
+          <div class="cell type1"></div>
+          <div class="cell type4"></div>
+          <div class="cell type3"></div>
+          <div class="cell type1"></div>
+        </div>
+        <div class="row">
+          <div class="cell type1"></div>
+          <div class="cell type4"></div>
+          <div class="cell type2"></div>
+          <div class="cell type2"></div>
+          <div class="cell type1"></div>
+        </div>
+      </div>
+    </body>
+    <script type="text/javascript">
+    var oriObj = document.getElementById("tableBox");
+    oriObj.addEventListener('touchstart', touchS, false );
+    oriObj.addEventListener('touchmove',touchM ,  false);
+    oriObj.addEventListener('touchend', touchE, false);
+    function touchS(){
+        console.log("sss");
+    }
+    function touchM(){
+        console.log("mmm");
+    }
+    function touchE(){
+        console.log("eee");
+    }
+        
+    </script>
+    </html>      }
