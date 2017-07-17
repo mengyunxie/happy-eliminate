@@ -105,15 +105,23 @@
     oriObj.addEventListener('touchstart', touchS, false );
     oriObj.addEventListener('touchmove',touchM ,  false);
     oriObj.addEventListener('touchend', touchE, false);
-    function touchS(){
-        console.log("sss");
+    function touchS(ev){
+        var ev = ev || window.event;
+　　　　var target = ev.target || ev.srcElement;
+        console.log(target);
     }
-    function touchM(){
+    function touchM(ev){
+        var ev = ev || window.event;
+　　　　var target = ev.target || ev.srcElement;
         console.log("mmm");
+        console.log(target);
     }
-    function touchE(){
+    function touchE(ev){
+        var ev = ev || window.event;
+　　　　var target = ev.target || ev.srcElement;
         console.log("eee");
+        console.log(target);
     }
         
     </script>
-    </html>      }
+    </html> 
