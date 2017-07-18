@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>key</title>
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no,initial-scale=1, maximum-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <style>
@@ -64,39 +64,39 @@
     <body>
       <div class="tableBox" id="tableBox">
         <div class="row">
-          <div class="cell type0"></div>
-          <div class="cell type1"></div>
-          <div class="cell type4"></div>
-          <div class="cell type3"></div>
-          <div class="cell type1"></div>
+          <div class="cell dragEle type0"></div>
+          <div class="cell dragEle type1"></div>
+          <div class="cell dragEle type4"></div>
+          <div class="cell dragEle type3"></div>
+          <div class="cell dragEle type1"></div>
         </div>
         <div class="row">
-          <div class="cell type1"></div>
-          <div class="cell type1"></div>
-          <div class="cell type3"></div>
-          <div class="cell type4"></div>
-          <div class="cell type2"></div>
+          <div class="cell dragEle type1"></div>
+          <div class="cell dragEle type1"></div>
+          <div class="cell dragEle type3"></div>
+          <div class="cell dragEle type4"></div>
+          <div class="cell dragEle type2"></div>
         </div>
         <div class="row">
-          <div class="cell type2"></div>
-          <div class="cell type2"></div>
-          <div class="cell type4"></div>
-          <div class="cell type2"></div>
-          <div class="cell type2"></div>
+          <div class="cell dragEle type2"></div>
+          <div class="cell dragEle type2"></div>
+          <div class="cell dragEle type4"></div>
+          <div class="cell dragEle type2"></div>
+          <div class="cell dragEle type2"></div>
         </div>
         <div class="row">
-          <div class="cell type0"></div>
-          <div class="cell type1"></div>
-          <div class="cell type4"></div>
-          <div class="cell type3"></div>
-          <div class="cell type1"></div>
+          <div class="cell dragEle type0"></div>
+          <div class="cell dragEle type1"></div>
+          <div class="cell dragEle type4"></div>
+          <div class="cell dragEle type3"></div>
+          <div class="cell dragEle type1"></div>
         </div>
         <div class="row">
-          <div class="cell type1"></div>
-          <div class="cell type4"></div>
-          <div class="cell type2"></div>
-          <div class="cell type2"></div>
-          <div class="cell type1"></div>
+          <div class="cell dragEle type1"></div>
+          <div class="cell dragEle type4"></div>
+          <div class="cell dragEle type2"></div>
+          <div class="cell dragEle type2"></div>
+          <div class="cell dragEle type1"></div>
         </div>
       </div>
     </body>
@@ -105,22 +105,86 @@
     oriObj.addEventListener('touchstart', touchS, false );
     oriObj.addEventListener('touchmove',touchM ,  false);
     oriObj.addEventListener('touchend', touchE, false);
+    var startPositoin ={
+        x:0,
+        y:0,
+        time:0
+    };
+    var displacementX = 0 , displacementY = 0 , displacementXABS = 0,displacementYABS = 0;
     function touchS(ev){
         var ev = ev || window.event;
 　　　　var target = ev.target || ev.srcElement;
-        console.log(target);
+        var className = target.className;
+
+        if(className.indexOf("dragEle") != -1){
+            if(ev.touches.length == 1){
+               startPositoin.x = ev.touches[0].pageX;
+               startPositoin.y = ev.touches[0].pageY;
+               startPositoin.time = new Date();
+               // console.log(startPositoin);
+            }
+        }
     }
     function touchM(ev){
         var ev = ev || window.event;
 　　　　var target = ev.target || ev.srcElement;
-        console.log("mmm");
-        console.log(target);
+        var className = target.className;
+        var targetWidth = target.offsetWidth,targetHeight = target.offsetHeight;
+        if(className.indexOf("dragEle") != -1){ 
+            if(ev.touches.length == 1){
+                displacementX = ev.touches[0].pageX - startPositoin.x;
+                displacementY = ev.touches[0].pageY - startPositoin.y;
+                displacementXABS = Math.abs( displacementX );
+                displacementYABS = Math.abs( displacementY );
+
+                if((displacementXABS >= ( targetWidth*0.5 ) && displacementXABS <=( targetWidth*1.5 ) ) || ( displacementYABS >= ( targetHeight*0.5 ) && displacementYABS <= ( targetHeight*1.5 ) )){
+                    console.log("create");
+                    target.style.left = ev.touches[0].pageX + 'px';
+                    target.style.top = ev.touches[0].pageY + 'px';
+                    // console.log(ev);
+                }
+                if(displacementXABS > ( targetWidth*1.5 )|| displacementYABS > ( targetHeight*1.5 )){
+                    console.log("clear");
+                }
+
+            }
+        }
+        ev.preventDefault();
     }
     function touchE(ev){
         var ev = ev || window.event;
 　　　　var target = ev.target || ev.srcElement;
-        console.log("eee");
-        console.log(target);
+        var className = target.className;
+        var targetWidth = target.offsetWidth,targetHeight = target.offsetHeight;
+        if(className.indexOf("dragEle") != -1){
+            if(ev.changedTouches.length == 1){
+                displacementX = ev.changedTouches[0].pageX - startPositoin.x;
+                displacementY = ev.changedTouches[0].pageY - startPositoin.y;
+                displacementXABS = Math.abs( displacementX );
+                displacementYABS = Math.abs( displacementY );
+                if((displacementXABS >= ( targetWidth*0.5 ) && displacementXABS <=( targetWidth*1.5 ) ) || ( displacementYABS >= ( targetHeight*0.5 ) && displacementYABS <= ( targetHeight*1.5 ) )){
+                    
+                    //向上
+                    if((displacementY<0&&displacementX>0&&displacementYABS>displacementXABS)||(displacementY<0&&displacementX<0&&displacementYABS>displacementXABS)){
+                        console.log("向上");
+                    }
+                    //向下
+                    if((displacementY>0&&displacementX<0&&displacementYABS>displacementXABS)||(displacementY>0&&displacementX>0&&displacementYABS>displacementXABS)){
+                        console.log("向下");
+                    }
+                    //向右
+                    if((displacementY<0&&displacementX>0&&displacementYABS<displacementXABS)||(displacementY>0&&displacementX>0&&displacementYABS<displacementXABS)){
+                        console.log("向右");
+                    }
+                    //向左
+                    if((displacementY<0&&displacementX<0&&displacementYABS<displacementXABS)||(displacementY>0&&displacementX<0&&displacementYABS<displacementXABS)){
+                        console.log("向左");
+                    }
+                    
+                }
+               
+            }
+        }
     }
         
     </script>
