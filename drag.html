@@ -181,7 +181,7 @@
         var className = target.className;
         var targetWidth = target.offsetWidth,targetHeight = target.offsetHeight;
         var parentEle = null , exEle = null , exEleClass = '';
-        var targetIndex = 0 , exIndex = 0;
+        var targetIndex = 0 , exIndex = -1;
         var upFlag = true , downFlag = true , leftFlag = true , rightFlag = true ;
         if(className.indexOf("dragEle") != -1){
             if(ev.changedTouches.length == 1){
@@ -245,7 +245,7 @@
                     }  
                 }
                 
-                if(exIndex != 0){
+                if(exIndex >= 0){
                     //交换
                     for(var m = 0 ; m <parentEle.childNodes.length ; m++){
                         if(parentEle.childNodes[m].dataset.index == targetIndex){
