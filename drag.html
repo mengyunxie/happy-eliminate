@@ -21,7 +21,18 @@
     .clear{clear:both}
     strike{ color:#8c8c8c;}
     i,h1,h2{ font-style:normal;}
-
+    .titleBox{
+        width:100%;
+        height:32px;
+        line-height:32px;
+        text-align:center;
+        color:#888;
+        font-weight:700;
+        background-color:#eee;
+    }
+    .titleBox .scoreBox{
+        font-weight:500;
+    }
     .tableBox{
         position:relative;
         width:300px;
@@ -39,11 +50,41 @@
         width:58px;
         height:58px;
         line-height:58px;
-        margin:1px 1px;
+        border:1px solid #fff;
         text-align:center;
-        border-radius:3px;
+        border-radius:10px;
+        background-size:100% 100%;
+        background-color:#eee;
     }
+    .cell.active{
+        border:1px solid #e19b20;
+    }
+    /*.cell.active{
+        border:1px solid #e19b20;
+    }
+    .cell i{
+        display:block;
+        width:100%;
+        height:100%;
+        background-size:100% 100%;
+    }*/
     .cell.type0{
+        background-image:url(img/0.png);
+    }
+    .cell.type1{
+        background-image:url(img/1.png);
+    }
+    .cell.type2{
+        background-image:url(img/2.png);
+    }
+    .cell.type3{
+        background-image:url(img/3.png);
+    }
+    .cell.type4{
+        background-image:url(img/4.png);
+    }
+
+/*    .cell.type0{
         background-color:#e8c646;
     }
     .cell.type1{
@@ -57,11 +98,42 @@
     }
     .cell.type4{
         background-color:#42d6d6;
-    }
-
+    }*/
     </style>
     </head>
     <body>
+    <div class="titleBox">
+        分数：<span class="scoreBox" id="scoreBox"></span>
+    </div>
+<!--       <div class="tableBox" id="tableBox">
+
+          <div class="cell dragEle type0"><i></i></div>
+          <div class="cell dragEle type1"><i></i></div>
+          <div class="cell dragEle type4"><i></i></div>
+          <div class="cell dragEle type3"><i></i></div>
+          <div class="cell dragEle type1"><i></i></div>
+          <div class="cell dragEle type1"><i></i></div>
+          <div class="cell dragEle type1"><i></i></div>
+          <div class="cell dragEle type3"><i></i></div>
+          <div class="cell dragEle type4"><i></i></div>
+          <div class="cell dragEle type2"><i></i></div>
+          <div class="cell dragEle type2"><i></i></div>
+          <div class="cell dragEle type2"><i></i></div>
+          <div class="cell dragEle type4"><i></i></div>
+          <div class="cell dragEle type2"><i></i></div>
+          <div class="cell dragEle type2"><i></i></div>
+          <div class="cell dragEle type0"><i></i></div>
+          <div class="cell dragEle type1"><i></i></div>
+          <div class="cell dragEle type4"><i></i></div>
+          <div class="cell dragEle type3"><i></i></div>
+          <div class="cell dragEle type1"><i></i></div>
+          <div class="cell dragEle type1"><i></i></div>
+          <div class="cell dragEle type4"><i></i></div>
+          <div class="cell dragEle type2"><i></i></div>
+          <div class="cell dragEle type2"><i></i></div>
+          <div class="cell dragEle type1"><i></i></div>
+      </div> -->
+    <div class="tableBox" id="tableBox"></div>
 <!--       <div class="tableBox" id="tableBox">
         <div class="row">
           <div class="cell dragEle type0"></div>
@@ -103,52 +175,64 @@
     <script type="text/javascript">
     var ROW_MAX = 5;
     var COL_MAX = 5;
-    var initArr1 = [[3,4,2,2,2],
+    var SPECI_MAX = 5;
+    var speciArr = [];
+    var initArr1 = [[3,4,2,2,3],
                     [1,4,0,4,2],
-                    [3,3,3,1,0],
+                    [1,3,3,1,0],
                     [3,2,4,2,1],
                     [3,4,0,1,3]];
+    for (var i = 0; i < SPECI_MAX; i++) {
+      speciArr[i] = [[0,0,0,0,0],
+                     [0,0,0,0,0],
+                     [0,0,0,0,0],
+                     [0,0,0,0,0],
+                     [0,0,0,0,0]];
+    }
     var startPositoin ={
         x:0,
         y:0,
         time:0
     };
+    var targetRow = 0 , targetCol = 0 ,exRow = 0 ,exCol = 0 ;
     
     var displacementX = 0 , displacementY = 0 , displacementXABS = 0,displacementYABS = 0;
     function initDemo(arrParams){
         var index = 0;
-        var tableDemo = document.createElement('div'); 
-        tableDemo.className = 'tableBox';
-        tableDemo.setAttribute("id","tableBox");
+        var tableDemo = document.getElementById("tableBox");
+        // var tableDemo = document.createElement('div'); 
+        // tableDemo.className = 'tableBox';
+        // tableDemo.setAttribute("id","tableBox");
         var cellDemo = '';
         for(var row =0;row<ROW_MAX;row++){
             for(var col =0;col<COL_MAX;col++){
-              cellDemo +='<div class="cell dragEle type'+arrParams[row][col]+'" data-index="'+index+'">'+arrParams[row][col]+'</div>';
+              cellDemo +='<div class="cell dragEle type'+arrParams[row][col]+'" data-index="'+index+'"></div>';
               index++;
             }    
         }
         tableDemo.innerHTML = cellDemo;
-        document.body.appendChild(tableDemo);
+        // document.body.appendChild(tableDemo);
     }
     initDemo(initArr1);
     var oriObj = document.getElementById("tableBox");
-    oriObj.addEventListener('touchstart', touchS, false );
-    oriObj.addEventListener('touchmove',touchM ,  false);
-    oriObj.addEventListener('touchend', touchE, false);
+        oriObj.addEventListener('touchstart', touchS, false );
+        oriObj.addEventListener('touchmove',touchM ,  false);
+        oriObj.addEventListener('touchend', touchE, false);
 
     function touchS(ev){
         var ev = ev || window.event;
 　　　　var target = ev.target || ev.srcElement;
         var className = target.className;
-
         if(className.indexOf("dragEle") != -1){
             if(ev.touches.length == 1){
-               startPositoin.x = ev.touches[0].pageX;
-               startPositoin.y = ev.touches[0].pageY;
-               startPositoin.time = new Date();
+                //target.className = className+' '+'active';
+                startPositoin.x = ev.touches[0].pageX;
+                startPositoin.y = ev.touches[0].pageY;
+                startPositoin.time = new Date();
             }
         }
     }
+
     function touchM(ev){
         var ev = ev || window.event;
 　　　　var target = ev.target || ev.srcElement;
@@ -247,28 +331,218 @@
                 
                 if(exIndex >= 0){
                     //交换
-                    for(var m = 0 ; m <parentEle.childNodes.length ; m++){
-                        if(parentEle.childNodes[m].dataset.index == targetIndex){
-                            exEleClass = parentEle.childNodes[m].className;
-                            exEle = parentEle.childNodes[m].innerHTML;
-                            break;
-                        }  
-                    }
-                    for(var n = 0 ; n <parentEle.childNodes.length ; n++){
-                        if(parentEle.childNodes[n].dataset.index == exIndex){
-                            target.className = parentEle.childNodes[n].className;
-                            target.innerHTML = parentEle.childNodes[n].innerHTML;
-                            parentEle.childNodes[n].className = exEleClass;
-                            parentEle.childNodes[n].innerHTML = exEle;
-                            break;
-                        }  
-                    }
+                    targetRow = Math.floor(targetIndex/COL_MAX);
+                    targetCol = targetIndex%COL_MAX;
+                    exRow = Math.floor(exIndex/COL_MAX);
+                    exCol = exIndex%COL_MAX;
+
+                    // for(var m = 0 ; m <parentEle.childNodes.length ; m++){
+                    //     if(parentEle.childNodes[m].dataset.index == targetIndex){
+                    //         exEleClass = parentEle.childNodes[m].className;
+                    //         exEle = parentEle.childNodes[m].innerHTML;
+                    //         break;
+                    //     }  
+                    // }
+                    // for(var n = 0 ; n <parentEle.childNodes.length ; n++){
+                    //     if(parentEle.childNodes[n].dataset.index == exIndex){
+                    //         target.className = parentEle.childNodes[n].className;
+                    //         target.innerHTML = parentEle.childNodes[n].innerHTML;
+                    //         parentEle.childNodes[n].className = exEleClass;
+                    //         parentEle.childNodes[n].innerHTML = exEle;
+                    //         break;
+                    //     }  
+                    // }
+                    console.log("targetRow: "+targetRow);
+                    console.log("targetCol: "+targetCol);
+                    console.log("exRow: "+exRow);
+                    console.log("exCol: "+exCol);
+                    mainProcess(targetRow,targetCol,exRow,exCol); 
 
                 }
 
             }
         }
     }
-        
+
+    function handleArr(arrParams){
+        var res = 0;
+        for (var row = 0; row < ROW_MAX; row++) {
+            for (var col = 0; col < COL_MAX - 2; col++) {
+                if (arrParams[row][col] == arrParams[row][col + 1]) {
+                    if (arrParams[row][col] == arrParams[row][col + 2]) {
+                        res = 1;
+                        speciArr[arrParams[row][col]][row][col]++;
+                        speciArr[arrParams[row][col]][row][col + 1]++;
+                        speciArr[arrParams[row][col]][row][col + 2]++;
+                        if (col + 3 >= COL_MAX) {
+                            col += 3;
+                            continue;
+                        }
+                        if (arrParams[row][col] == arrParams[row][col + 3]) {
+                            speciArr[arrParams[row][col]][row][col + 3]++;
+                            if (col + 4 >= COL_MAX) {
+                                col += 4;
+                                continue;
+                            }
+                            if (arrParams[row][col] == arrParams[row][col + 4]) {
+                                speciArr[arrParams[row][col]][row][col + 4]++;
+                                col += 5;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (var col = 0; col < COL_MAX; col++) {
+            for (var row = 0; row < ROW_MAX - 2; row++) {
+                if (arrParams[row][col] == arrParams[row + 1][col]) {
+                    if (arrParams[row][col] == arrParams[row + 2][col]) {
+                        res = 1;
+                        speciArr[arrParams[row][col]][row][col]++;
+                        speciArr[arrParams[row][col]][row + 1][col]++;
+                        speciArr[arrParams[row][col]][row + 2][col]++;
+                        if (row + 3 >= ROW_MAX) {
+                            row += 3;
+                            continue;
+                        }
+                        if (arrParams[row][col] == arrParams[row + 3][col]) {
+                            speciArr[arrParams[row][col]][ row + 3][col]++;
+                            if (row + 4 >= ROW_MAX) {
+                                row += 4;
+                                continue;
+                            }
+                            if (arrParams[row][col] == arrParams[row + 4][col]) {
+                                speciArr[arrParams[row][col]][row+ 4][col]++;
+                                row += 5;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
+    function printArr(arr) {
+      console.log("-------------");
+      for (var row = 0; row < ROW_MAX; row++) {
+        console.log(row + ":" + JSON.stringify(arr[row]));
+      }
+      console.log("-------------");
+    }
+
+    var scoreTotle = 0;
+    function calcScore(speciArr){
+        var score = 0;
+        for (var row = 0; row < ROW_MAX; row++) {
+            for (var col = 0; col < COL_MAX; col++) {
+              if(speciArr[row][col]>0){
+                score += speciArr[row][col];  
+              }        
+            }
+        }
+        switch(score){
+          case 3:
+            score = score*1;
+            break;
+          case 4:
+            score = score*1;
+            break;
+          case 5:
+            score = score*2;
+            break;
+          case 6:
+            score = score*3;
+            break;
+          case 7:
+            score = score*3+1;
+            break;
+          case 8:
+            score = score*3+2;
+            break;
+
+        }
+        scoreTotle +=score;
+    }
+    function refreshArr(arr, rspeci){
+        // 遍历每一列
+        for (var col = 0; col < COL_MAX; col++){
+          var cntNoneZero = 0;
+          var firstNoneZeroRow;
+          for (var row = ROW_MAX - 1; row >= 0; row--) {
+            if (cntNoneZero == 0) {
+              // 从下往上找第一个非0
+              if (rspeci[row][col] > 0) {
+                cntNoneZero++;
+                firstNoneZeroRow = row;
+              }
+            } else {
+              // 找到第一个非0后，计非0的个数
+              if (rspeci[row][col] > 0) {
+                cntNoneZero++;
+              } else {
+                break;
+              }
+            }
+          }
+          if (cntNoneZero > 0) {
+            for (var i = firstNoneZeroRow; i >= 0 ; i--) {
+              if (i - cntNoneZero >= 0) {
+                initArr1[i][col] = initArr1[i - cntNoneZero][col];
+              } else {
+                //Math.floor(Math.random()*(max-min+1)+min);
+                initArr1[i][col] = Math.floor(Math.random() * SPECI_MAX);
+              }
+            }
+          }
+        }
+    }
+
+    function clearArr(arr) {
+      for (var row = 0; row < ROW_MAX; row++) {
+        for (var col = 0; col < COL_MAX; col++) {
+          arr[row][col] = 0;
+        }
+      }
+    }
+
+    function switchArr(initArr1, row1, col1, row2, col2) {
+        var a = initArr1[row1][col1];
+        initArr1[row1][col1] = initArr1[row2][col2];
+        initArr1[row2][col2] = a; 
+    }
+
+    function mainProcess(targetRow,targetCol,exRow,exCol) {
+        var res = 0;
+        switchArr(initArr1, targetRow, targetCol, exRow, exCol);
+        initDemo(initArr1);
+        res = handleArr(initArr1);
+        console.log("res : "+res)
+        if (res == 0) {
+            switchArr(initArr1, targetRow, targetCol, exRow, exCol);
+            initDemo(initArr1);
+            return;
+        }
+
+        while (res == 1) {
+
+            for (var i = 0; i < SPECI_MAX; i++) {
+                calcScore(speciArr[i]);
+            }
+            for (var i = 0; i < SPECI_MAX; i++) {
+                refreshArr(initArr1, speciArr[i]);
+            }
+            for (var i = 0; i < SPECI_MAX; i++) {
+                clearArr(speciArr[i]);
+            }
+
+            res = handleArr(initArr1);
+
+        }
+        printArr(initArr1);
+        initDemo(initArr1);
+        document.getElementById("scoreBox").innerHTML  = scoreTotle;
+    }
+  
     </script>
     </html> 
