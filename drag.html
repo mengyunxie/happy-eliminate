@@ -54,34 +54,25 @@
         text-align:center;
         border-radius:10px;
         background-size:100% 100%;
-        background-color:#eee;
+        background-color:#faf4ea;
     }
     .cell.active{
         border:1px solid #e19b20;
     }
-    /*.cell.active{
-        border:1px solid #e19b20;
-    }
-    .cell i{
-        display:block;
-        width:100%;
-        height:100%;
-        background-size:100% 100%;
-    }*/
     .cell.type0{
-        background-image:url(img/0.png);
+        background-image:url(img/food0.png);
     }
     .cell.type1{
-        background-image:url(img/1.png);
+        background-image:url(img/food1.png);
     }
     .cell.type2{
-        background-image:url(img/2.png);
+        background-image:url(img/food2.png);
     }
     .cell.type3{
-        background-image:url(img/3.png);
+        background-image:url(img/food3.png);
     }
     .cell.type4{
-        background-image:url(img/4.png);
+        background-image:url(img/food4.png);
     }
 
 /*    .cell.type0{
@@ -173,6 +164,14 @@
       </div> -->
     </body>
     <script type="text/javascript">
+    var startPositoin ={
+        x:0,
+        y:0,
+        time:0
+    };
+    var targetRow = 0 , targetCol = 0 ,exRow = 0 ,exCol = 0 ;
+    var displacementX = 0 , displacementY = 0 , displacementXABS = 0,displacementYABS = 0;
+    var scoreTotle = 0;
     var ROW_MAX = 5;
     var COL_MAX = 5;
     var SPECI_MAX = 5;
@@ -189,20 +188,10 @@
                      [0,0,0,0,0],
                      [0,0,0,0,0]];
     }
-    var startPositoin ={
-        x:0,
-        y:0,
-        time:0
-    };
-    var targetRow = 0 , targetCol = 0 ,exRow = 0 ,exCol = 0 ;
-    
-    var displacementX = 0 , displacementY = 0 , displacementXABS = 0,displacementYABS = 0;
+
     function initDemo(arrParams){
         var index = 0;
         var tableDemo = document.getElementById("tableBox");
-        // var tableDemo = document.createElement('div'); 
-        // tableDemo.className = 'tableBox';
-        // tableDemo.setAttribute("id","tableBox");
         var cellDemo = '';
         for(var row =0;row<ROW_MAX;row++){
             for(var col =0;col<COL_MAX;col++){
@@ -211,7 +200,6 @@
             }    
         }
         tableDemo.innerHTML = cellDemo;
-        // document.body.appendChild(tableDemo);
     }
     initDemo(initArr1);
     var oriObj = document.getElementById("tableBox");
@@ -225,7 +213,7 @@
         var className = target.className;
         if(className.indexOf("dragEle") != -1){
             if(ev.touches.length == 1){
-                //target.className = className+' '+'active';
+                target.className = className+' '+'active';
                 startPositoin.x = ev.touches[0].pageX;
                 startPositoin.y = ev.touches[0].pageY;
                 startPositoin.time = new Date();
@@ -262,7 +250,8 @@
     function touchE(ev){
         var ev = ev || window.event;
 　　　　var target = ev.target || ev.srcElement;
-        var className = target.className;
+        var className = target.className.replace('active','');
+        target.className = className;
         var targetWidth = target.offsetWidth,targetHeight = target.offsetHeight;
         var parentEle = null , exEle = null , exEleClass = '';
         var targetIndex = 0 , exIndex = -1;
@@ -431,7 +420,7 @@
       console.log("-------------");
     }
 
-    var scoreTotle = 0;
+    
     function calcScore(speciArr){
         var score = 0;
         for (var row = 0; row < ROW_MAX; row++) {
