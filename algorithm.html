@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>key</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+    /*全局公用样式*/
+    body{margin:0;padding:0;color:#000;font-size:12px; font-family:"微软雅黑"; background:#FFF; line-height:21px;}
+    form,input,div,dl,dt,dd,ul,ol,li,table,tr,th,td,textarea,form,botton,img,h1,h2,h3,h4,h5,h6,p{border:0;margin:0;padding:0;}
+    img{border:0;vertical-align:top;width: auto; height: auto; max-width: 100%;}
+    input[type="text"]{-webkit-appearance: none;}
+    /*列表公用样式*/
+    ul,li{list-style:none;}
+    /*浮动公用样式*/
+    .left{float:left}
+    .right{float:right}
+    .clear{clear:both}
+    strike{ color:#8c8c8c;}
+    i,h1,h2{ font-style:normal;}
+    .tableBox{width:300px;height:300px;border:1px solid #eee;margin:20px auto;}
+    .row{width:100%;height:60px;overflow:hidden;}
+    .cell{float:left;width:58px;height:58px;line-height:58px;margin:1px 1px;text-align:center;border-radius:3px;}
+    .cell.type0{background-color:#e8c646;}
+    .cell.type1{background-color:#52bf52;}
+    .cell.type2{background-color:#6e6ce8;}
+    .cell.type3{background-color:#e47be4;}
+    .cell.type4{background-color:#42d6d6;}
+
+    </style>
+    </head>
+    <body>
+<!--       <div class="tableBox">
+        <div class="row">
+          <div class="cell a"></div>
+          <div class="cell b"></div>
+          <div class="cell c"></div>
+          <div class="cell a"></div>
+          <div class="cell c"></div>
+        </div>
+      </div> -->
+    </body>
+<script type="text/javascript">
+
+var ROW_MAX = 5;
+var COL_MAX = 5;
+var SPECI_MAX = 5;
+//eg:
+//3,2,2,3,2         , , ,3,2        5,5,2,3,2        5, ,2,3,2        5,3,2,3,2
+//1,2,5,2,5        3,2,2,2,5        3,2,2,2,5        3, ,2,2,5        3,3,2,2,5
+//3,3,3,1,5        1,2,5,1,5        1,2,5,5,5        1, ,5,1,5        1,4,5,1,5
+//3,2,4,2,1        3,2,4,2,1        3,2,4,2,1        3,5,4,2,1        3,5,4,2,1
+//5,4,5,1,3  ===>  5,4,5,1,3  ===>  5,4,5,1,3  ===>  5,4,5,1,3  ===>  5,4,5,1,3
+
+//3,2,2,3,2         , , ,3,2        5,5,1,3,3        0,0,0,0,0        0,0,0,0,0
+//1,2,5,2,5        3,2,2,2,5        3,2,2,2,2        0,1,1,1,0        0,1,1,1,0
+//3,3,3,1,5        1,2,5,1,5        1,1,5,5,5        0,0,2,1,1        0,0,0,0,0
+//3,2,4,2,1        3,2,4,2,1        3,2,5,2,1        0,0,1,0,0        0,1,1,1,1
+//5,4,5,1,3  ===>  5,4,5,1,3  ===>  5,4,5,1,3  ===>  0,0,1,0,0  ===>  0,0,0,0,0
+
+//0,1,2,1,0        0,2,1,1,0        0,0,1,0,0        0,0,0,0,0        1,1,1,1,1
+//0,0,1,0,0        0,1,0,0,0        0,1,2,1,0        1,0,0,0,0        0,0,0,0,0
+//0,0,1,0,0        0,1,0,0,0        0,0,1,0,0        1,0,0,0,0        0,0,0,0,0
+//0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        1,0,0,0,0        0,0,0,0,0
+//0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0
+
+//0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0
+//0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0
+//0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0
+//0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0
+//0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0        0,0,0,0,0
+
+var initArr1 = [[3,4,2,2,2],
+                [1,4,0,4,2],
+                [3,3,3,1,0],
+                [3,2,4,2,1],
+                [3,4,0,1,3]];
+var speciArr = [];
+for (var i = 0; i < SPECI_MAX; i++) {
+  speciArr[i] = [[0,0,0,0,0],
+                 [0,0,0,0,0],
+                 [0,0,0,0,0],
+                 [0,0,0,0,0],
+                 [0,0,0,0,0]];
+}
+function dragOver(ev){  
+  ev.preventDefault();  
+  console.log(ev); 
+}  
+  
+var srcdiv = null;  
+function dragStart(ev,divdom){  
+  srcdiv=divdom; 
+  console.log(ev); 
+  ev.dataTransfer.setData("text/html",divdom.innerHTML);
+  ev.dataTransfer.setData("className",divdom.className);   
+}  
+  
+function drop(ev,divdom){  
+  ev.preventDefault();  
+  if(srcdiv != divdom){  
+    srcdiv.innerHTML = divdom.innerHTML; 
+    srcdiv.className = divdom.className; 
+    divdom.innerHTML=ev.dataTransfer.getData("text/html"); 
+    divdom.className=ev.dataTransfer.getData("className");  
+  }  
+} 
+function initDemo(arrParams){
+  // var tableDemo = '';
+  // tableDemo +='<div class="tableBox">';
+  var tableDemo = document.createElement('div'); 
+      tableDemo.className = 'tableBox';
+  var rowDemo = ''
+  for(var row =0;row<ROW_MAX;row++){
+      rowDemo +='<div class="row">';
+      var cellDemo = '';
+    for(var col =0;col<COL_MAX;col++){
+      cellDemo +='<div class="cell type'+arrParams[row][col]+'" ondrop="drop(event,this)" ondragover="dragOver(event)" draggable="true" ondragstart="dragStart(event, this)">'+arrParams[row][col]+'</div>';
+    }    
+      rowDemo =rowDemo+cellDemo+'</div>'
+  }
+  //tableDemo =tableDemo+rowDemo+'</div>'
+  //console.log(tableDemo);
+  //document.body.innerHTML =tableDemo;
+  tableDemo.innerHTML = rowDemo;
+  document.body.appendChild(tableDemo);
+}
+function setSpeci(speci, row, col) {
+    // var theSpeci;
+    // switch (speci) {
+    //     case 1:
+    //         theSpeci = speci1;
+    //         break;
+    //     case 2:
+    //         theSpeci = speci2;
+    //         break;
+    //     case 3:
+    //         theSpeci = speci3;
+    //         break;
+    //     case 4:
+    //         theSpeci = speci4;
+    //         break;
+    //     case 5:
+    //         theSpeci = speci5;
+    //         break;
+    // }
+    // theSpeci[row][col] += 1;
+    speciArr[speci][row][col]++;
+}
+
+function handleArr(arrParams){
+
+    var res = 0;
+
+    for (var row = 0; row < ROW_MAX; row++) {
+        for (var col = 0; col < COL_MAX - 2; col++) {
+            if (arrParams[row][col] == arrParams[row][col + 1]) {
+                if (arrParams[row][col] == arrParams[row][col + 2]) {
+                    res = 1;
+                    setSpeci(arrParams[row][col], row, col);
+                    setSpeci(arrParams[row][col], row, col + 1);
+                    setSpeci(arrParams[row][col], row, col + 2);
+                    if (col + 3 >= COL_MAX) {
+                        col += 3;
+                        continue;
+                    }
+                    if (arrParams[row][col] == arrParams[row][col + 3]) {
+                        setSpeci(arrParams[row][col], row, col + 3);
+                        if (col + 4 >= COL_MAX) {
+                            col += 4;
+                            continue;
+                        }
+                        if (arrParams[row][col] == arrParams[row][col + 4]) {
+                            setSpeci(arrParams[row][col], row, col + 4);
+                            col += 5;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for (var col = 0; col < COL_MAX; col++) {
+        for (var row = 0; row < ROW_MAX - 2; row++) {
+            if (arrParams[row][col] == arrParams[row + 1][col]) {
+                if (arrParams[row][col] == arrParams[row + 2][col]) {
+                    res = 1;
+                    setSpeci(arrParams[row][col], row, col);
+                    setSpeci(arrParams[row][col], row + 1, col);
+                    setSpeci(arrParams[row][col], row + 2, col);
+                    if (row + 3 >= ROW_MAX) {
+                        row += 3;
+                        continue;
+                    }
+                    if (arrParams[row][col] == arrParams[row + 3][col]) {
+                        setSpeci(arrParams[row][col], row + 3, col);
+                        if (row + 4 >= ROW_MAX) {
+                            row += 4;
+                            continue;
+                        }
+                        if (arrParams[row][col] == arrParams[row + 4][col]) {
+                            setSpeci(arrParams[row][col], row+ 4, col);
+                            row += 5;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return res;
+}
+function printArr(arr) {
+  console.log("-------------");
+  for (var row = 0; row < ROW_MAX; row++) {
+    console.log(row + ":" + JSON.stringify(arr[row]));
+  }
+  console.log("-------------");
+}
+
+var scoreTotle = 0;
+function calcScore(speciArr){
+    var score = 0;
+    for (var row = 0; row < ROW_MAX; row++) {
+        for (var col = 0; col < COL_MAX; col++) {
+          if(speciArr[row][col]>0){
+            score += speciArr[row][col];
+            // speciArr[row][col] = 0;
+            
+          }        
+        }
+    }
+    switch(score){
+      case 3:
+        score = score*1;
+        break;
+      case 4:
+        score = score*1;
+        break;
+      case 5:
+        score = score*2;
+        break;
+      case 6:
+        score = score*3;
+        break;
+      case 7:
+        score = score*3+1;
+        break;
+      case 8:
+        score = score*3+2;
+        break;
+
+    }
+    scoreTotle +=score;
+}
+function refreshArr(arr, rspeci){
+    // 遍历每一列
+    for (var col = 0; col < COL_MAX; col++){
+      var cntNoneZero = 0;
+      var firstNoneZeroRow;
+      for (var row = ROW_MAX - 1; row >= 0; row--) {
+        if (cntNoneZero == 0) {
+          // 从下往上找第一个非0
+          if (rspeci[row][col] > 0) {
+            cntNoneZero++;
+            firstNoneZeroRow = row;
+          }
+        } else {
+          // 找到第一个非0后，计非0的个数
+          if (rspeci[row][col] > 0) {
+            cntNoneZero++;
+          } else {
+            break;
+          }
+        }
+      }
+      if (cntNoneZero > 0) {
+        for (var i = firstNoneZeroRow; i >= 0 ; i--) {
+          if (i - cntNoneZero >= 0) {
+            initArr1[i][col] = initArr1[i - cntNoneZero][col];
+          } else {
+            //Math.floor(Math.random()*(max-min+1)+min);
+            initArr1[i][col] = Math.floor(Math.random() * SPECI_MAX);
+          }
+        }
+      }
+    }
+}
+
+function clearArr(arr) {
+  for (var row = 0; row < ROW_MAX; row++) {
+    for (var col = 0; col < COL_MAX; col++) {
+      arr[row][col] = 0;
+    }
+  }
+}
+
+function switchArr(initArr1, row1, col1, row2, col2) {
+  var a = initArr1[row1][col1];
+  initArr1[row1][col1] = initArr1[row2][col2];
+  initArr1[row2][col2] = a;
+}
+
+function mainProcess() {
+
+  var res = 0;
+
+  // switchArr(initArr1, row1, col1, row2, col2);
+  initDemo(initArr1);
+  res = handleArr(initArr1);
+  // if (res == 0) {
+  //   switchArr(initArr1, row1, col1, row2, col2);
+  //   return;
+  // }
+
+  printArr(initArr1);
+
+  // while (res == 1) {
+
+    // printArr(speci1);
+    // printArr(speci2);
+    // printArr(speci3);
+    // printArr(speci4);
+    // printArr(speci5);
+
+    for (var i = 0; i < SPECI_MAX; i++) {
+      calcScore(speciArr[i]);
+    }
+    for (var i = 0; i < SPECI_MAX; i++) {
+      refreshArr(initArr1, speciArr[i]);
+    }
+    for (var i = 0; i < SPECI_MAX; i++) {
+      clearArr(speciArr[i]);
+    }
+
+    res = handleArr(initArr1);
+
+  // }
+
+  console.log(scoreTotle);
+  printArr(initArr1);
+  initDemo(initArr1);
+}
+
+mainProcess();
+
+
+</script>
+</html>
+
